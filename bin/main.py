@@ -70,9 +70,9 @@ def res_add(in_, residual):
     
     return Add() ([in_, residual])
 
-#arch = [(64, 2), (128, 4), (256, 5), (512, 3), (1024, 3)]
+arch = [(64, 2), (128, 4), (256, 5), (512, 3), (1024, 3)]
 
-arch = [(64, 2), (128, 2), (256, 2), (512, 2), (1024, 2)]
+#arch = [(64, 2), (128, 2), (256, 2), (512, 2), (1024, 2)]
 
 def build_res(arch, image_target, num_classes):
     input_ = Input((image_target[0], image_target[1], 3))
