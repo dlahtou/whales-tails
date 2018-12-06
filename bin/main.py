@@ -8,6 +8,7 @@ from keras.preprocessing.image import ImageDataGenerator
 from keras.optimizers import Adam
 from keras.regularizers import l2
 from keras.backend import int_shape
+import tensorflow as tf
 
 df = pd.read_csv("../input/train.csv")
 
@@ -75,30 +76,32 @@ arch = [(64, 2), (128, 4), (256, 5), (512, 3), (1024, 3)]
 #arch = [(64, 2), (128, 2), (256, 2), (512, 2), (1024, 2)]
 
 def build_res(arch, image_target, num_classes):
-    input_ = Input((image_target[0], image_target[1], 3))
-    
-    initial_conv = bn_relu_conv(input_, 64, stride=2)
-    
-    initial_pool = MaxPool2D(pool_size=(3,3), strides=(2,2), padding="same") (initial_conv)
-    
-    res = initial_pool
-    
-    # create blocks and skip connects according to specified architecture
-    for step, (f_maps, num_blocks) in enumerate(arch):
-        for i in range(num_blocks):
-            if i == 0 and step != 0:
-                x = block(res, f_maps, downsample=True)
-            else:
-                x = block(res, f_maps, downsample=False)
-            
-            res = res_add(x, res)
-    
-    out_pool = GlobalAveragePooling2D() (res)
-    output = Dense(num_classes, activation='softmax') (out_pool)
-    
-    model = Model(inputs=input_, outputs=output)
-    adam = Adam(lr=0.001)
-    model.compile(optimizer=adam, loss='categorical_crossentropy', metrics=['accuracy'])
+
+    with tf.device('/gpu:0'):
+        input_ = Input((image_target[0], image_target[1], 3))
+        
+        initial_conv = bn_relu_conv(input_, 64, stride=2)
+        
+        initial_pool = MaxPool2D(pool_size=(3,3), strides=(2,2), padding="same") (initial_conv)
+        
+        res = initial_pool
+        
+        # create blocks and skip connects according to specified architecture
+        for step, (f_maps, num_blocks) in enumerate(arch):
+            for i in range(num_blocks):
+                if i == 0 and step != 0:
+                    x = block(res, f_maps, downsample=True)
+                else:
+                    x = block(res, f_maps, downsample=False)
+                
+                res = res_add(x, res)
+        
+        out_pool = GlobalAveragePooling2D() (res)
+        output = Dense(num_classes, activation='softmax') (out_pool)
+        
+        model = Model(inputs=input_, outputs=output)
+        adam = Adam(lr=0.001)
+        model.compile(optimizer=adam, loss='categorical_crossentropy', metrics=['accuracy'])
     
     return model
 
