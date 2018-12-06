@@ -102,6 +102,8 @@ def build_res(arch, image_target, num_classes):
 
 model = build_res(arch, image_target, num_classes)
 
+len_train=len(df)
+
 model.fit_generator(train_generator,
                     epochs=10,
                     steps_per_epoch=len_train//batch_size*5)
