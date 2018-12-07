@@ -9,6 +9,7 @@ from keras.optimizers import Adam
 from keras.regularizers import l2
 from keras.backend import int_shape
 import tensorflow as tf
+from tqdm import tqdm
 
 df = pd.read_csv("../input/train.csv")
 
