@@ -112,7 +112,7 @@ model = build_res(arch, image_target, num_classes)
 
 len_train=len(df)
 
-lr_sched = LearningRateScheduler(lambda x, lr: lr/10 if x%3==2 else lr)
+lr_sched = LearningRateScheduler(lambda x, lr: lr/10 if x%3==2 else lr, verbose=1)
 stale = EarlyStopping(patience=3, verbose=1)
 checkpoint_model = ModelCheckpoint(f'whale_model.h5', verbose=1, save_best_only=True)
 
