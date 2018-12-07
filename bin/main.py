@@ -2,6 +2,7 @@ import numpy as np
 import pandas as pd 
 import os
 
+from keras.callbacks import EarlyStopping
 from keras.models import Model
 from keras.layers import Add, Input, AveragePooling2D, Concatenate, Conv2D, MaxPool2D, BatchNormalization, Dropout, Dense, Flatten, GlobalAveragePooling2D
 from keras.preprocessing.image import ImageDataGenerator
@@ -72,9 +73,9 @@ def res_add(in_, residual):
     
     return Add() ([in_, residual])
 
-# arch = [(64, 2), (128, 4), (256, 5), (512, 3), (1024, 3)]
+arch = [(64, 2), (128, 4), (256, 5), (512, 3), (1024, 3)]
 
-arch = [(64, 2), (128, 2), (256, 2), (512, 2)]
+# arch = [(64, 2), (128, 2), (256, 2), (512, 2)]
 
 def build_res(arch, image_target, num_classes):
 
@@ -102,6 +103,7 @@ def build_res(arch, image_target, num_classes):
         
         model = Model(inputs=input_, outputs=output)
         adam = Adam(lr=0.001)
+
         model.compile(optimizer=adam, loss='categorical_crossentropy', metrics=['accuracy'])
     
     return model
@@ -110,9 +112,13 @@ model = build_res(arch, image_target, num_classes)
 
 len_train=len(df)
 
+stale = EarlyStopping(patience=3, verbose=1)
+checkpoint_model = ModelCheckpoint(f'whale_model.h5', verbose=1, save_best_only=True)
+
 model.fit_generator(train_generator,
                     epochs=10,
-                    steps_per_epoch=len_train//batch_size*5)
+                    steps_per_epoch=len_train//batch_size*5,
+                    callbacks=[stale, checkpoint_model])
 
 test_df = pd.DataFrame({'Image':os.listdir('../input/test')})
 
