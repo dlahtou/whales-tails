@@ -14,7 +14,7 @@ from tqdm import tqdm
 
 df = pd.read_csv("../input/train.csv")
 
-image_target=(112,224)
+image_target=(224,448)
 batch_size=100
 dropout=0.2
 
@@ -102,7 +102,7 @@ def build_res(arch, image_target, num_classes):
         output = Dense(num_classes, activation='softmax') (out_pool)
         
         model = Model(inputs=input_, outputs=output)
-        adam = Adam(lr=0.1)
+        adam = Adam(lr=0.01)
 
         model.compile(optimizer=adam, loss='categorical_crossentropy', metrics=['accuracy'])
     
@@ -112,7 +112,7 @@ model = build_res(arch, image_target, num_classes)
 
 len_train=len(df)
 
-lr_sched = LearningRateScheduler(lambda x, lr: lr/10 if x%3==2 else lr, verbose=1)
+lr_sched = LearningRateScheduler(lambda x, lr: lr/10 if x%5==2 else lr, verbose=1)
 stale = EarlyStopping(patience=3, verbose=1)
 checkpoint_model = ModelCheckpoint(f'whale_model.h5', verbose=1, save_best_only=True)
 
