@@ -2,7 +2,7 @@ import numpy as np
 import pandas as pd 
 import os
 
-from keras.callbacks import EarlyStopping
+from keras.callbacks import EarlyStopping, ModelCheckpoint
 from keras.models import Model
 from keras.layers import Add, Input, AveragePooling2D, Concatenate, Conv2D, MaxPool2D, BatchNormalization, Dropout, Dense, Flatten, GlobalAveragePooling2D
 from keras.preprocessing.image import ImageDataGenerator
