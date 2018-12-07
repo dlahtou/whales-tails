@@ -14,7 +14,7 @@ from tqdm import tqdm
 
 df = pd.read_csv("../input/train.csv")
 
-image_target=(224,448)
+image_target=(112,224)
 batch_size=100
 dropout=0.2
 
@@ -73,9 +73,9 @@ def res_add(in_, residual):
     
     return Add() ([in_, residual])
 
-arch = [(64, 2), (128, 4), (256, 5), (512, 3), (1024, 3)]
+# arch = [(64, 2), (128, 4), (256, 5), (512, 3), (1024, 3)]
 
-# arch = [(64, 2), (128, 2), (256, 2), (512, 2)]
+arch = [(64, 2), (128, 2), (256, 2), (512, 2)]
 
 def build_res(arch, image_target, num_classes):
 
