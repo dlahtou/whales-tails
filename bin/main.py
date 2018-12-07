@@ -117,7 +117,7 @@ stale = EarlyStopping(patience=3, verbose=1)
 checkpoint_model = ModelCheckpoint(f'whale_model.h5', verbose=1, save_best_only=True)
 
 model.fit_generator(train_generator,
-                    epochs=10,
+                    epochs=12,
                     steps_per_epoch=len_train//batch_size,
                     # steps_per_epoch = 30,
                     callbacks=[stale, checkpoint_model, lr_sched])
