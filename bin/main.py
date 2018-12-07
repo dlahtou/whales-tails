@@ -23,7 +23,7 @@ idg = ImageDataGenerator(rescale=1./255,
                         width_shift_range=0.2,
                         shear_range=20,
                         zoom_range=0.2,
-                        horizontal_flip=True)
+                        horizontal_flip=False)
 
 train_generator = idg.flow_from_dataframe(df,
                         directory = '../input/train',
