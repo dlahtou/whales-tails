@@ -2,7 +2,7 @@ import numpy as np
 import pandas as pd 
 import os
 
-from keras.callbacks import EarlyStopping, ModelCheckpoint
+from keras.callbacks import EarlyStopping, ModelCheckpoint, LearningRateScheduler
 from keras.models import Model
 from keras.layers import Add, Input, AveragePooling2D, Concatenate, Conv2D, MaxPool2D, BatchNormalization, Dropout, Dense, Flatten, GlobalAveragePooling2D
 from keras.preprocessing.image import ImageDataGenerator
@@ -102,7 +102,7 @@ def build_res(arch, image_target, num_classes):
         output = Dense(num_classes, activation='softmax') (out_pool)
         
         model = Model(inputs=input_, outputs=output)
-        adam = Adam(lr=0.001)
+        adam = Adam(lr=0.1)
 
         model.compile(optimizer=adam, loss='categorical_crossentropy', metrics=['accuracy'])
     
@@ -112,13 +112,15 @@ model = build_res(arch, image_target, num_classes)
 
 len_train=len(df)
 
+lr_sched = LearningRateScheduler(lambda x, lr: lr/10 if x%3==2 else lr)
 stale = EarlyStopping(patience=3, verbose=1)
 checkpoint_model = ModelCheckpoint(f'whale_model.h5', verbose=1, save_best_only=True)
 
 model.fit_generator(train_generator,
                     epochs=10,
-                    steps_per_epoch=len_train//batch_size*5,
-                    callbacks=[stale, checkpoint_model])
+                    #steps_per_epoch=len_train//batch_size*5,
+                    steps_per_epoch = 30,
+                    callbacks=[stale, checkpoint_model, lr_sched])
 
 test_df = pd.DataFrame({'Image':os.listdir('../input/test')})
 
