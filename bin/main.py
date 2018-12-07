@@ -118,9 +118,11 @@ checkpoint_model = ModelCheckpoint(f'whale_model.h5', verbose=1, save_best_only=
 
 model.fit_generator(train_generator,
                     epochs=10,
-                    #steps_per_epoch=len_train//batch_size*5,
-                    steps_per_epoch = 30,
+                    steps_per_epoch=len_train//batch_size,
+                    # steps_per_epoch = 30,
                     callbacks=[stale, checkpoint_model, lr_sched])
+
+model.save('whale_model.h5')
 
 test_df = pd.DataFrame({'Image':os.listdir('../input/test')})
 
